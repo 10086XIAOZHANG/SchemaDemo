@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width,user-scalable=1">
+    <title>Schema</title>
+</head>
+<body>
+  <button id="btn">扫一扫</button>
+  <script type="application/javascript">
+      // function invokeScan() {
+      //     window['_invoke_scan_callback_'] =function (results) {
+      //         alert(results);
+      //     }
+      //     var iframe=document.createElement('iframe');
+      //     iframe.style.display='none';
+      //     iframe.src='weixin://dl/scan?k1=v1&callback=_invoke_scan_callback_';
+      //     var body =document;
+      //     body.appendChild(iframe);
+      //     setTimeout(function(){
+      //         body.removeChild(iframe);
+      //         iframe=null;
+      //     })
+      // }
+      document.getElementById('btn').addEventListener('click',function(){
+          window.invoke.scan({k1:'v1'},function () {
+
+          });
+      })
+  </script>
+  <script type="application/javascript">
+      window.invokeType={
+          SHARE:'share',
+          SCAN:'scan'
+      }
+  </script>
+<script type="application/javascript">
+    (function(window){
+        function invokeAppShare(data,callback){
+            _invoke_app('share',data,callback)
+        }
+        function invokeAppScan(data,callback){
+            _invoke_app('scan',data,callback)
+        }
+        window.invoke={
+            share:invokeAppShare,
+            scan:invokeAppScan
+        }
+        var schema ="ctapp://utils"
+        window._invoke_app =function(type,data,callback){
+            switch(type){
+                case window.invokeType.SHARE:
+                    schema= '/'+window.invokeType.SHARE
+                    //分享
+                    break;
+                case window.invokeType.SCAN:
+                    //扫码
+                    break;
+            }
+            schema += '?type=app'
+            for(var key in data){
+                if(data.hasOwnProperty(key)){
+                    schema+= '&' +key +'=' +data[key]
+                }
+            }
+            var callbackName='';
+            if(typeof callback === 'string'){
+                callbackName=callback
+            }else{
+                callbackName= callback+ Data.now().toString()
+                window[callbackName] =callback
+            }
+            schema+='&callback='+callbackName;
+            var iframe=document.createElement('iframe');
+            iframe.style.display='none';
+            iframe.src=schema;
+            var body =document;
+            body.appendChild(iframe);
+            setTimeout(function(){
+                body.removeChild(iframe);
+                iframe=null;
+            })
+        }
+    })(window)
+</script>
+</body>
+</html>
